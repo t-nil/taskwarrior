@@ -124,6 +124,7 @@ int CmdTimesheet::execute(std::string& output) {
   table.add("Wk");
   table.add("Date");
   table.add("Day");
+  table.add("Time");
   table.add("ID");
   table.add("Action");
   table.add("Project");
@@ -132,6 +133,7 @@ int CmdTimesheet::execute(std::string& output) {
   setHeaderUnderline(table);
 
   auto dateformat = Context::getContext().config.get("dateformat");
+  auto timeformat = "H:N";
 
   int previous_week = -1;
   std::string previous_date = "";
@@ -145,6 +147,7 @@ int CmdTimesheet::execute(std::string& output) {
 
     auto week = key.week();
     auto date = key.toString(dateformat);
+    auto time = key.toString(timeformat);
     auto due = task.has("due") ? Datetime(task.get("due")).toString(dateformat) : "";
     auto day = Datetime::dayNameShort(key.dayOfWeek());
 
@@ -171,11 +174,12 @@ int CmdTimesheet::execute(std::string& output) {
     table.set(row, 0, (week != previous_week ? format("W{1}", week) : ""));
     table.set(row, 1, (date != previous_date ? date : ""));
     table.set(row, 2, (day != previous_day ? day : ""));
-    table.set(row, 3, task.identifier(true));
-    table.set(row, 4, label);
-    table.set(row, 5, task.get("project"));
-    table.set(row, 6, due);
-    table.set(row, 7, task.get("description"), task_color);
+    table.set(row, 3, time);
+    table.set(row, 4, task.identifier(true));
+    table.set(row, 5, label);
+    table.set(row, 6, task.get("project"));
+    table.set(row, 7, due);
+    table.set(row, 8, task.get("description"), task_color);
 
     previous_week = week;
     previous_date = date;
